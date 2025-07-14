@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "01a0efda-bfc6-4c59-b5ec-1513cc8a02eb",
+		"name": "TSP Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "QPX - itinerary",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Save session solution",
+							"const xmlResponse = pm.response.text();",
+							"const parseString = require('xml2js').parseString;",
+							"",
+							"parseString(xmlResponse, (err, result) => {",
+							"    if (err) {",
+							"        console.error(\"Error parsing XML:\", err);",
+							"    } else {",
+							"        const sessionValue = result.result.$.session;",
+							"        pm.globals.set(\"session\", sessionValue);",
+							"",
+							"        const solutionSetValue = result.result.$.solutionSet;",
+							"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "72c04d75-82cb-43e2-bb36-dfbf66533887"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// 1. Add session / solutionSet",
+							"let session = pm.globals.get(\"session\");",
+							"let solutionSet = pm.globals.get(\"solutionSet\");",
+							"",
+							"let additionalContent = '';",
+							"if (session) {",
+							"    additionalContent += ` session=\"${session}\" `;",
+							"}",
+							"if (solutionSet) {",
+							"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+							"}",
+							"",
+							"// Replace search",
+							"let originalBody = pm.request.body.raw;",
+							"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+							"",
+							"// 2. Create request id",
+							"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+							"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+							"pm.request.body.raw = body;",
+							"",
+							"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"id": "5fd252aa-a134-4dbc-a90b-b1794c4b29d2"
+					}
+				}
+			],
+			"id": "17083243-709c-4ba7-afea-b6708887e042",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				},
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<!-- Find solutions by itinerary, with no pricing. -->\r\n<search api=\"shopping\" name=\"itinerary\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>PEK</origin>\r\n                <destination>HKG</destination>\r\n                <date>2025-12-01</date>\r\n            </slice>\r\n            <slice>\r\n                <origin>CAN</origin>\r\n                <destination>HND</destination>\r\n                <date>2025-12-10</date>\r\n            </slice>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>10</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>itineraryDetail</summarizer>\r\n    <!-- <summarizer>prettyPrint</summarizer> -->\r\n    <!-- <summarizer>segmentAvailabilityCount</summarizer> -->\r\n\r\n</search>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+			},
+			"response": []
+		}
+	]
+}
