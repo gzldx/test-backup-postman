@@ -1,0 +1,2475 @@
+{
+	"info": {
+		"_postman_id": "708999be-32ca-4638-9953-181e3218f5af",
+		"name": "Google POC By ACN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "API Shopping",
+			"item": [
+				{
+					"name": "1.fareByMarket - One Way",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "6bfd7f60-90f2-488b-895e-6123f7ef9594"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "acd583b2-c8b0-47fd-987b-0841f76f3a6b"
+							}
+						}
+					],
+					"id": "0d2d8e64-1a7b-4393-969c-af29b35e5c67",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- Find fares in the given fare market. -->\r\n<search api=\"shopping\" name=\"fareByMarket\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <!-- Required -->\r\n        <searchControl>\r\n            <!-- Required -->\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n            </slice>\r\n            <!-- Required -->\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>fareByMarket</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "1.fareByMarket - Round Trip",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "3c9b92d3-dd4b-4493-92ba-0b9071efca81"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "ea042783-9239-4e54-ac51-08cc2c7e69ed"
+							}
+						}
+					],
+					"id": "5aadbf73-2e32-42d7-8dae-bd0d08a9a1bb",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- Find fares in the given fare market. -->\r\n<search api=\"shopping\" name=\"fareByMarket\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <!-- Required -->\r\n        <searchControl>\r\n            <!-- Required -->\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n            </slice>\r\n            <!-- Required -->\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>fareByMarket</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "2.itinerary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "19b18f56-9eb5-49cc-9479-d4058578d29e"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "4832e7b5-be2b-4a3c-ac4a-12e01c7c1654"
+							}
+						}
+					],
+					"id": "64d196cf-9bd3-46c6-989c-74f0fd066a2a",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- Find solutions by itinerary, with no pricing. -->\r\n<search api=\"shopping\" name=\"itinerary\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n            </slice>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>itineraryDetail</summarizer>\r\n    <!-- <summarizer>prettyPrint</summarizer> -->\r\n    <!-- <summarizer>segmentAvailabilityCount</summarizer> -->\r\n\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "3.itineraryByDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "0ca0a10e-30a7-42e1-9292-0ed963e9c8ad"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "b79c92dc-7052-4374-a670-04f234050d1f"
+							}
+						}
+					],
+					"id": "761d34b8-500f-4f4c-b612-dd835562e831",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- Find solutions by itinerary over multiple days, with no pricing. -->\r\n<search api=\"shopping\" name=\"itineraryByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n                <daysBefore>1</daysBefore>\r\n                <daysAfter>1</daysAfter>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n                <daysBefore>1</daysBefore>\r\n                <daysAfter>1</daysAfter>\r\n            </slice>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>itineraryDetail</summarizer>\r\n\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "[-]4.priceByItinerary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "fa75bd03-25ad-4840-a9ba-1aaac55ae214"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "e8714a60-8537-4c83-8b98-635c43b35a84"
+							}
+						}
+					],
+					"id": "8f925bff-2c75-4251-a03a-4d5b8ef182e2",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"shopping\" name=\"priceByItinerary\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n                <segment>\r\n                    <itineraryGroupIndex>0</itineraryGroupIndex>\r\n                    <origin>{{Orgin}}</origin>\r\n                    <destination>{{Destination}}</destination>\r\n                    <departure>2025-12-02T00:00</departure>\r\n                    <flight>CX524</flight>\r\n                </segment>\r\n            </slice>\r\n            <!-- <slice><origin>{{Destination}}</origin><destination>{{Orgin}}</destination><date>{{ReturnDate}}</date></slice> -->\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>priceByItineraryTripFullDetail</summarizer>\r\n    <!-- <summarizer>overnightFlightTrip</summarizer><summarizer>departureTimeSliderTrip</summarizer><summarizer>departureTimeRangeTrip</summarizer><summarizer>arrivalTimeSliderTrip</summarizer><summarizer>arrivalTimeRangeTrip</summarizer><summarizer>originTrip</summarizer><summarizer>airportMatrixTrip</summarizer> -->\r\n\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "5.priceByDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "e7228d69-9c9d-46b1-aca5-fb07a80935cb"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "82557b0e-0bdb-4dff-9463-36b6d82e8d12"
+							}
+						}
+					],
+					"id": "eadc0896-ef5b-4511-9598-bbab5dfb24e7",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- Defines the minimum price for each date in the solution set. -->\r\n<search api=\"shopping\" name=\"priceByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <passenger>\r\n                <count>1</count>\r\n                <type>adult</type>\r\n            </passenger>\r\n            <slice>\r\n                <daysAfter>31</daysAfter>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n                <permittedEarliestDepartureTime>07:00</permittedEarliestDepartureTime>\r\n                <permittedLatestDepartureTime>11:00</permittedLatestDepartureTime>\r\n                <preferredEarliestDepartureTime>08:00</preferredEarliestDepartureTime>\r\n                <preferredLatestDepartureTime>10:00</preferredLatestDepartureTime>\r\n            </slice>\r\n            <slice>\r\n                <daysAfter>31</daysAfter>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n            </slice>\r\n            <pointOfSale>\r\n                <name>CX POS</name>\r\n                <salesCity>{{Orgin}}</salesCity>\r\n            </pointOfSale>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>priceByDate</summarizer>\r\n    <!-- <summarizer>priceByDateGrid</summarizer> -->\r\n    <!-- <summarizer>priceByDateMonths</summarizer> -->\r\n    <!-- <summarizer>priceByDateMonthsFullDetail</summarizer> -->\r\n    <!-- <summarizer>priceByDateWeeks</summarizer> -->\r\n    <!-- <summarizer>priceByDateWeeksFullDetail</summarizer> -->\r\n\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "6.priceSingleItinerary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "323e6e34-8262-43c0-a5b9-1fbc05ed1027"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "9b180f80-0d2a-498b-94a2-e89d4648ec1b"
+							}
+						}
+					],
+					"id": "ec030912-5667-43bb-b6b3-8991802bd1bf",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- Provided detailed solution price based upon previously obtained solution ID. -->\r\n<search api=\"shopping\" name=\"priceByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <!-- Specify either the solution setID/solution ID -->\r\n            <!--   OR   -->\r\n            <!-- the segments details for the slice. -->\r\n            <!-- THIS example specifies the solution set ID/solution ID: -->\r\n            <!-- <solutionId>sample_solution_set_id/sample_solution_id_1</solutionId> -->\r\n            <!-- Specify the same Trip-Specific Values that generated the\r\n        solution set ID and solution ID for each slice. -->\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n            </slice>\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>pricingDetail</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "7.priceOptionalServices",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "8477c289-6189-4e22-a095-2005289956f1"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "b94eb2b1-7bf8-4493-9cda-3ccadc0332bf"
+							}
+						}
+					],
+					"id": "2b820b75-b687-4b6d-88b4-15af7bc89f2e",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- Price optional services for an existing pricing. -->\r\n<search api=\"shopping\" name=\"priceOptionalServices\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n                <segment>\r\n                    <departure>{{FlightDate}}T00:00</departure>\r\n                    <destination>{{Destination}}</destination>\r\n                    <flight>CX524</flight>\r\n                    <origin>{{Orgin}}</origin>\r\n                    <passenger>\r\n                        <specifiedFare>\r\n                            <basisCode>Y</basisCode>\r\n                            <bookingCode>Y</bookingCode>\r\n                            <carrierCode>AS</carrierCode>\r\n                            <city1>SEA</city1>\r\n                            <city2>JFK</city2>\r\n                            <salePrice>USD0</salePrice>\r\n                        </specifiedFare>\r\n                    </passenger>\r\n                </segment>\r\n            </slice>\r\n            <salesCurrency>USD</salesCurrency>\r\n            <optionalServiceSpec>\r\n                <carrier>XX</carrier>\r\n                <subcode>04D</subcode>\r\n            </optionalServiceSpec>\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n                <optionalServiceMatch>\r\n                    <optionalServiceMatchKey>Seats Available</optionalServiceMatchKey>\r\n                    <optionalServiceMatchNumberValue>3</optionalServiceMatchNumberValue>\r\n                    <segmentReference>\r\n                        <sliceIndex>0</sliceIndex>\r\n                        <segmentIndex>0</segmentIndex>\r\n                    </segmentReference>\r\n                </optionalServiceMatch>\r\n                <optionalServiceMatch>\r\n                    <optionalServiceMatchKey>FF Status</optionalServiceMatchKey>\r\n                    <optionalServiceMatchStringValue>MVP</optionalServiceMatchStringValue>\r\n                    <segmentReference>\r\n                        <sliceIndex>0</sliceIndex>\r\n                        <segmentIndex>0</segmentIndex>\r\n                    </segmentReference>\r\n                </optionalServiceMatch>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>20</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>pricingDetail</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				}
+			],
+			"id": "f03d1319-fd16-4740-8f1b-46ec01d4caa0"
+		},
+		{
+			"name": "API PartnerShopping",
+			"item": [
+				{
+					"name": "[xx]1.partnerPriceByDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "f700437c-2d35-4a9e-951b-394c14f6d971"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "07507317-2a04-4dc4-bb45-8ecee6795ef1"
+							}
+						}
+					],
+					"id": "2f321be9-bfd6-42d0-9adb-d638e32f326a",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"partnerShopping\" name=\"partnerPriceByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n            <slice>\r\n                <origin>BOS</origin>\r\n                <destination>LAX</destination>\r\n                <date>2025-12-01</date>\r\n                <daysBefore>3</daysBefore>\r\n                <daysAfter>3</daysAfter>\r\n            </slice>\r\n            <slice>\r\n                <origin>LAX</origin>\r\n                <destination>BOS</destination>\r\n                <date>2025-12-07</date>\r\n                <daysBefore>3</daysBefore>\r\n                <daysAfter>3</daysAfter>\r\n            </slice>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>priceByDate</summarizer>\r\n    <summarizer>priceByDateMonths</summarizer>\r\n    <summarizer>priceByDateWeeks</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "2.partnerPriceByItinerary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "80e4b1c6-12fe-4080-846b-277199dccadd"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "d550d867-e56c-4ac9-89e8-073d7e6c22a8"
+							}
+						}
+					],
+					"id": "5822b727-5578-4c5d-ad1f-13014c2c4051",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"partnerShopping\" name=\"partnerPriceByItinerary\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <!-- Trip-Specific Values -->\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n            </slice>\r\n            <passenger>\r\n                <!-- NOTE: Valid values for \"type\" are based on the carrier's implementation -->\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>priceByItineraryTrip</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				}
+			],
+			"id": "15d8d72d-d9ff-4bba-a5f3-1563a1813696"
+		},
+		{
+			"name": "API Reshop",
+			"item": [
+				{
+					"name": "1.Refund",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "bd1ad410-aa3f-4b5b-ac58-dbb60ec677c8"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "d34c9d39-e536-476b-8264-46bbebf97d15"
+							}
+						}
+					],
+					"id": "b77eb4dc-7880-4473-bd85-b5d554f331c0",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"reshop\" name=\"refund\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <refund>\r\n                <ticket>\r\n                    <fareCalculation>\r\n            SEA AS BOS837.21FASR USD837.21END ZP SEA XF SEA4.50\r\n          </fareCalculation>\r\n                    <issueDate>2025-09-17</issueDate>\r\n                    <pax>\r\n                        <ptc>ADT</ptc>\r\n                    </pax>\r\n                    <saleFareTotal>USD837.21</saleFareTotal>\r\n                    <tax>\r\n                        <code>US</code>\r\n                        <price>USD62.79</price>\r\n                    </tax>\r\n                    <tax>\r\n                        <code>ZP</code>\r\n                        <price>USD4.00</price>\r\n                    </tax>\r\n                    <tax>\r\n                        <code>AY</code>\r\n                        <price>USD5.60</price>\r\n                    </tax>\r\n                    <tax>\r\n                        <code>XF</code>\r\n                        <price>USD4.50</price>\r\n                    </tax>\r\n                    <validatingCarrier>AS</validatingCarrier>\r\n                    <coupon used=\"false\">\r\n                        <bookingCode>F</bookingCode>\r\n                        <fare>FASR</fare>\r\n                        <originCode>SEA</originCode>\r\n                        <destinationCode>BOS</destinationCode>\r\n                        <departure>2025-09-30T22:30</departure>\r\n                        <flight>AS24</flight>\r\n                    </coupon>\r\n                </ticket>\r\n            </refund>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>refund</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				}
+			],
+			"id": "135d1c06-9b73-45a4-b653-e80ddc5d0d2c"
+		},
+		{
+			"name": "API AwardShopping",
+			"item": [
+				{
+					"name": "1.award-priceByItinerary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "f4221963-93d0-4c0e-982c-e3e9563f2a97"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "60b34fd8-7484-42db-96bf-2ee2d9149c96"
+							}
+						}
+					],
+					"id": "bf8baa79-e051-45a2-b633-bb40cd48b8d7",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"awardShopping\" name=\"priceByItinerary\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>BOS</origin>\r\n                <destination>LAX</destination>\r\n                <date>2025-12-01</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <slice>\r\n                <origin>LAX</origin>\r\n                <destination>BOS</destination>\r\n                <date>2025-12-07</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <!-- Valid Award passenger types are carrier-dependent -->\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>priceByItineraryTrip</summarizer>\r\n    <summarizer>pricingDetail</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "2.1 award-priceByDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "0816464f-7b96-4266-8e83-1820270b3066"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "43e6f888-f5a9-4fef-8a05-607e6f4d4761"
+							}
+						}
+					],
+					"id": "807e99a0-7e2b-41bd-95f2-eb06ef018e28",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"awardShopping\" name=\"priceByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <!-- Valid Award passenger types are carrier-dependent -->\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n            <pointOfSale>\r\n                <name>award</name>\r\n                <accountCode>TIER2</accountCode>\r\n            </pointOfSale>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>pricingDetail</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 award-priceByDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "9ac67a6d-ac58-4aab-b0a8-d11414fb6fb4"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "4a2431ba-bc75-43c1-9cbe-c50cee48b112"
+							}
+						}
+					],
+					"id": "3fffb34a-90c8-4d86-a3e3-157d01e5e57f",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"awardShopping\" name=\"priceByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <!-- Valid Award passenger types are carrier-dependent -->\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n            <pointOfSale>\r\n                <name>award</name>\r\n                <accountCode>TIER2</accountCode>\r\n            </pointOfSale>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>pricingDetail</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 award-priceByDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "7e1d5e34-429d-4056-a7ab-91fb2135da80"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "2f4acddc-0bfa-42f1-b339-39c93e29cea0"
+							}
+						}
+					],
+					"id": "1f39c998-f4ce-4906-807e-c7c148ad568d",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"awardShopping\" name=\"priceByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>{{Orgin}}</origin>\r\n                <destination>{{Destination}}</destination>\r\n                <date>{{FlightDate}}</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <slice>\r\n                <origin>{{Destination}}</origin>\r\n                <destination>{{Orgin}}</destination>\r\n                <date>{{ReturnDate}}</date>\r\n                <maxStopCount>1</maxStopCount>\r\n            </slice>\r\n            <!-- Valid Award passenger types are carrier-dependent -->\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n            <pointOfSale>\r\n                <name>award</name>\r\n                <accountCode>TIER2</accountCode>\r\n                <salesCountry>IT</salesCountry>\r\n            </pointOfSale>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>{{PageSize}}</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>pricingDetail</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				}
+			],
+			"id": "e86e419a-e903-4370-9368-77eee4647227"
+		},
+		{
+			"name": "API Marketing - no permissions",
+			"item": [
+				{
+					"name": "[x]1.marketingPriceByDate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "5dae5aa1-6acf-4af6-a282-90804fd59e63"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "92c320cf-c28f-4408-b2a7-f5d2e12b5f87"
+							}
+						}
+					],
+					"id": "516cb7b3-5d7c-4337-8028-0215de74c6db",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"marketing\" name=\"marketingPriceByDate\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <daysBefore>3</daysBefore>\r\n                <daysAfter>3</daysAfter>\r\n                <minLengthOfStay>6</minLengthOfStay>\r\n                <maxLengthOfStay>7</maxLengthOfStay>\r\n                <origin>BOS</origin>\r\n                <destination>IST</destination>\r\n                <date>2025-12-01</date>\r\n            </slice>\r\n            <slice>\r\n                <daysBefore>1</daysBefore>\r\n                <daysAfter>1</daysAfter>\r\n                <origin>IST</origin>\r\n                <destination>BOS</destination>\r\n                <date>2025-12-07</date>\r\n            </slice>\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>20</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>priceByDate</summarizer>\r\n    <summarizer>priceByDateGrid</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/{{Env}}"
+					},
+					"response": []
+				}
+			],
+			"id": "054ef861-3f8f-4f06-8f98-313dd143ca3e"
+		},
+		{
+			"name": "API Lookup - Remove",
+			"item": [
+				{
+					"name": "[x]1.airportsWithinRadius",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "f5c31451-d82d-4f33-8c9e-e5606046b2aa"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "56a85383-de4c-4cd1-b6d6-46f6c1d196f6"
+							}
+						}
+					],
+					"id": "d7c8c0a7-de85-4631-8abc-d5b9dd8c589e",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"airportsWithinRadius\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n  <inputs>\r\n    <searchControl>\r\n      <distance>25</distance>\r\n      <distanceUnits>MI</distanceUnits>\r\n      <city>NYC</city>\r\n    </searchControl>\r\n  </inputs>\r\n  <summarizer>nearbyAirportList</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]2.currencyConversion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "8861bfdd-d914-4ff9-95c5-f9f7a5384891"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "0ba647e6-a2c0-4f71-85c6-d7ebd4dd5623"
+							}
+						}
+					],
+					"id": "14aeaec7-8f18-4f97-baa1-816ce16d9b61",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"currencyConversion\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <fromPrice>\r\n                <amount>3000</amount>\r\n                <currency>USD</currency>\r\n            </fromPrice>\r\n            <fromPrice>\r\n                <amount>500</amount>\r\n                <currency>CAD</currency>\r\n            </fromPrice>\r\n            <toCurrency>CHF</toCurrency>\r\n            <rateTable>BSR</rateTable>\r\n            <effectiveTime>2022-10-09T12:00Z</effectiveTime>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>currencyConversionLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]3.mileageLookup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "eac8cfd5-7071-414f-bcbd-24199f6f830e"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "c3ef3888-d800-4298-9436-1f65a37ccaa8"
+							}
+						}
+					],
+					"id": "b4340c2b-b45b-4310-aaeb-6fec4571b010",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"mileageLookup\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <mileageRoute>\r\n                <mileageRoutePoint>BOS</mileageRoutePoint>\r\n                <carrier>XX</carrier>\r\n            </mileageRoute>\r\n            <mileageRoutePoint>NRT</mileageRoutePoint>\r\n            <mileageRoutePoint>UKY</mileageRoutePoint>\r\n            <globalIndicator>PA</globalIndicator>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>mileageLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]4.mctLookup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "e04dc8fd-c879-4b9c-9543-65b31ed3ac36"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "d63193a0-4269-4dad-8777-90be65de86ee"
+							}
+						}
+					],
+					"id": "bcc16c42-f07b-41b6-9dac-3c7c5ffd08aa",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"mctLookup\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <mctArrivalSpec>\r\n                <arrivalAirport>LGW</arrivalAirport>\r\n                <previousAirport>EWR</previousAirport>\r\n            </mctArrivalSpec>\r\n            <mctDepartureSpec>\r\n                <departureAirport>LHR</departureAirport>\r\n                <nextAirport>FCO</nextAirport>\r\n            </mctDepartureSpec>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>mctLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]5.passengerFacilityCharge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "6078fc4b-af5c-45e5-9de1-dc689904ee69"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "87ac398b-9ffd-44f8-9851-d639fab3e318"
+							}
+						}
+					],
+					"id": "0b16ef0f-31ee-496b-92a1-d7ddb548035f",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"passengerFacilityCharge\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <airport>LAX</airport>\r\n            <effectiveTime>2022-12-01T00:00:00-0500</effectiveTime>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>passengerFacilityChargeLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]6.taxText",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "61011fc3-79b8-4a3a-93b1-80b840d7ace2"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "06c89414-f575-4c24-9331-72c3f7643da6"
+							}
+						}
+					],
+					"id": "f524e88e-6aae-4fcc-8c65-9b1889703a7c",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"taxText\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <taxSpec>\r\n                <countryCode>US</countryCode>\r\n                <taxCode>US</taxCode>\r\n                <taxSubcode>015</taxSubcode>\r\n            </taxSpec>\r\n            <effectiveTime>2022-10-09T12:00Z</effectiveTime>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>taxTextLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]7.bookingCodeTables",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "9da275dc-e2cd-4109-b213-6703ba49e612"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "648fa7f1-43c8-4844-a7e4-3be99f965b93"
+							}
+						}
+					],
+					"id": "543cff4a-7922-4e40-b9f5-6196ae5a4903",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"bookingCodeTables\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <fareRkey>############</fareRkey>\r\n            <lookupAnswerLimit>10</lookupAnswerLimit>\r\n            <pointOfSaleToUse>posLibName</pointOfSaleToUse>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>bookingCodeTableLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]8.cat25RuleApplication",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "98f2df63-1920-40f6-970d-c546f2a4b11d"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "bb7a2796-52c7-48da-b340-9ed7ee88cb27"
+							}
+						}
+					],
+					"id": "4522a2bb-e8ce-4f03-94ea-852be9d38cc3",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"cat25RuleApplication\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <fareRkey>############</fareRkey>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>fbrFareLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]9.fareRouting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "96767e48-d709-4853-8553-d125feacafff"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "d9a644da-4938-4133-b6c9-8d288bb1cfe2"
+							}
+						}
+					],
+					"id": "7108b931-769f-4dc3-9c6d-a30ef60db98f",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"fareRouting\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <fareRkey>############</fareRkey>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>fareRoutingLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]10.fareTextRuleLookup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "3d07171c-47c6-4647-900d-7d87bca907b3"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "b0509541-0891-4d21-936f-d0f60b39456b"
+							}
+						}
+					],
+					"id": "8b94af00-1147-4b79-ad19-66bece4395d0",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"fareRouting\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <fareRkey>############</fareRkey>\r\n        </searchControl>\r\n    </inputs>\r\n    <summarizer>fareTextRuleLookup</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				},
+				{
+					"name": "[x]11.fareByMarket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save session solution",
+									"const xmlResponse = pm.response.text();",
+									"const parseString = require('xml2js').parseString;",
+									"",
+									"parseString(xmlResponse, (err, result) => {",
+									"    if (err) {",
+									"        console.error(\"Error parsing XML:\", err);",
+									"    } else {",
+									"        const sessionValue = result.result.$.session;",
+									"        pm.globals.set(\"session\", sessionValue);",
+									"",
+									"        const solutionSetValue = result.result.$.solutionSet;",
+									"        pm.globals.set(\"solutionSet\", solutionSetValue);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "a1d2aed7-2625-4a3e-8eeb-b10f29fdb7da"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// 1. Add session / solutionSet",
+									"let session = pm.globals.get(\"session\");",
+									"let solutionSet = pm.globals.get(\"solutionSet\");",
+									"",
+									"let additionalContent = '';",
+									"if (session) {",
+									"    additionalContent += ` session=\"${session}\" `;",
+									"}",
+									"if (solutionSet) {",
+									"    additionalContent += ` solutionSet=\"${solutionSet}\" `;",
+									"}",
+									"",
+									"// Replace search",
+									"let originalBody = pm.request.body.raw;",
+									"var body = originalBody.replace(/<search([^>]*)>/, `<search$1 ${additionalContent}>`);",
+									"",
+									"// 2. Create request id",
+									"let requestId = Math.floor(Math.random() * 1000000000); // 生成一个 0 到 999999999 之间的随机整数",
+									"var body = body.replace(/requestId=\"\"/, `requestId=\"${requestId}\"`);",
+									"pm.request.body.raw = body;",
+									"",
+									"console.log(\"Updated Request Body:\", pm.request.body.raw);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"id": "87ea0037-dd9a-45a2-95a9-0aea7b71cc2e"
+							}
+						}
+					],
+					"id": "9577934e-1ee3-4031-a75f-2b1745f86040",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						},
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "<!-- dev-guide/examples/quick-start.xml -->\r\n<search api=\"lookup\" name=\"fareByMarket\" key=\"{{APIKey}}\" version=\"{{DocVersion}}\">\r\n    <inputs>\r\n        <searchControl>\r\n            <slice>\r\n                <origin>BOS</origin>\r\n                <destination>NRT</destination>\r\n                <date>2025-12-15</date>\r\n            </slice>\r\n            <slice>\r\n                <origin>NRT</origin>\r\n                <destination>BOS</destination>\r\n                <date>2025-12-22</date>\r\n            </slice>\r\n            <passenger>\r\n                <type>adult</type>\r\n                <count>1</count>\r\n            </passenger>\r\n            <fareByMarketAnswerLimit>100</fareByMarketAnswerLimit>\r\n            <permittedFareCarrier>XX</permittedFareCarrier>\r\n            <requiredGlobalIndicator>PA</requiredGlobalIndicator>\r\n        </searchControl>\r\n        <summarizerControl>\r\n            <pageSize>20</pageSize>\r\n        </summarizerControl>\r\n    </inputs>\r\n    <summarizer>fareByMarket</summarizer>\r\n</search>",
+							"options": {
+								"raw": {
+									"language": "xml"
+								}
+							}
+						},
+						"url": "https://partner-client.google.com/travel/qpxconnect/test"
+					},
+					"response": []
+				}
+			],
+			"id": "4f0b54d8-63a3-4d74-aa42-a3e328959025"
+		}
+	]
+}
